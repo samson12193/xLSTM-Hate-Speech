@@ -2,6 +2,11 @@ from scipy.stats import spearmanr
 from sklearn.metrics import mean_absolute_error
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.subplots as sp
 
 def compare_model_performance(vector_1, vector_2, description):
     vector_1 = np.array(vector_1)
@@ -23,8 +28,6 @@ def compare_model_performance(vector_1, vector_2, description):
 #comparison_results_df = pd.DataFrame([compare_model_performance(v1, v2, desc) for v1, v2, desc in model_pairs])
 
 # Redefining the function after environment reset
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 def plot_model_distributions(recom, clust, knn, recom_norm, clust_norm, knn_norm):
     """
@@ -61,8 +64,6 @@ def plot_model_distributions(recom, clust, knn, recom_norm, clust_norm, knn_norm
 #plot_model_distributions(recom, clust, knn, recom_norm, clust_norm, knn_norm)
     
 
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 def plot_model_histograms_sns(data_series):
     # Number of rows and cols for the subplot grid, assuming a square layout for simplicity
@@ -88,10 +89,36 @@ def plot_model_histograms_sns(data_series):
     return fig
 
 
-    
-import matplotlib.pyplot as plt
-import seaborn as sns
 
+from wordcloud import WordCloud, STOPWORDS
+
+def generate_wordcloud(data, label, title):
+    # Filter the data for the given label
+    filtered_data = data[data['label'] == label]
+    comment_words = ''
+    stopwords_set = set(STOPWORDS)
+
+    for val in filtered_data['tweet']:
+        val = str(val)
+        tokens = val.split()
+        tokens = [word.lower() for word in tokens]
+        comment_words += " ".join(tokens) + " "
+
+    wordcloud = WordCloud(width=800, height=800,
+                          background_color='white',
+                          stopwords=stopwords_set,
+                          min_font_size=10).generate(comment_words)
+
+    # Plot the WordCloud image
+    plt.figure(figsize=(8, 8), facecolor=None)
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.title(title)
+    plt.tight_layout(pad=0)
+    plt.show()
+
+
+    
 def plot_model_boxplots(recom, clust, knn, recom_norm, clust_norm, knn_norm):
     fig, axes = plt.subplots(2, 1, figsize=(8, 8))
 
@@ -113,8 +140,6 @@ def plot_model_boxplots(recom, clust, knn, recom_norm, clust_norm, knn_norm):
 # Call the function with placeholder data
 #plot_model_boxplots(recom, clust, knn, recom_norm, clust_norm, knn_norm)
     
-import plotly.graph_objects as go
-import plotly.subplots as sp
 
 def plot_model_boxplots_plotly(recom, clust, knn, recom_norm, clust_norm, knn_norm):
     # Create subplots: one row, two cols
@@ -138,10 +163,8 @@ def plot_model_boxplots_plotly(recom, clust, knn, recom_norm, clust_norm, knn_no
 #plot_model_boxplots_plotly(recom, clust, knn, recom_norm, clust_norm, knn_norm)
     
 
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
-def plot_model_boxplots_plotly(data_series):
+def plot_model_boxplots_plotly1(data_series):
     # Number of rows and cols for the subplot grid, assuming a square layout for simplicity
     num_items = len(data_series)
     grid_size = int(num_items ** 0.5)
@@ -165,8 +188,8 @@ def plot_model_boxplots_plotly(data_series):
 
 
 
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+#import plotly.graph_objects as go
+#from plotly.subplots import make_subplots
 
 def plot_model_comparison_boxplots(data_series, subplot_titles=("Box Plot of Models")):
     # Number of series
@@ -184,8 +207,6 @@ def plot_model_comparison_boxplots(data_series, subplot_titles=("Box Plot of Mod
     return fig
 
 
-import numpy as np
-import pandas as pd
 from scipy.stats import shapiro
 
 
@@ -218,7 +239,7 @@ def test_normality(*args):
 # Call the function with your data series
 #results_df = test_normality(recom, clust, knn, recom_norm, clust_norm, knn_norm)
 
-from scipy.stats import kstest, norm
+from scipy.stats import kstest
 
 def test_normality_kolmogorov(data_series):
     results = []
@@ -245,8 +266,6 @@ def test_normality_kolmogorov(data_series):
     return results_df
 
 
-import numpy as np
-import pandas as pd
 from scipy.stats import iqr
 
 def compare_model_variability(vectors, vector_names):
@@ -276,7 +295,6 @@ def compare_model_variability(vectors, vector_names):
     return pd.DataFrame(metrics_list)
 
 from scipy.stats import kendalltau
-import pandas as pd
 
 def calculate_rbo(list1, list2, p=0.9):
     """
@@ -313,8 +331,7 @@ def compare_model_scores(scores, model_names):
     return pd.DataFrame(results)
 
 
-import numpy as np
-import pandas as pd
+
 from scipy.stats import ttest_rel
 
 def perform_t_tests(*args, model_names):
@@ -357,8 +374,6 @@ def perform_t_tests(*args, model_names):
 
 
 from scipy.stats import mannwhitneyu
-import numpy as np
-import pandas as pd
 
 def perform_mann_whitney_tests(*args, model_names):
     """
@@ -407,7 +422,6 @@ def perform_mann_whitney_tests(*args, model_names):
 import umap
 import plotly.express as px
 from sklearn.cluster import KMeans
-import numpy as np
 
 def analyze_embeddings(embeddings, n_neighbors=25, min_dist=0.01, n_components=3, num_clusters=5, random_state=42):
     """
